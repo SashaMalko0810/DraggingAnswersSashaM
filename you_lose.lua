@@ -1,8 +1,8 @@
 -----------------------------------------------------------------------------------------
 --
 -- credits_screen.lua
--- Created by: Daniel Lopez-Carreon
--- Date: Nov. 24th, 2014
+-- Name: Sasha Malko
+-- Date: May 7, 2018
 -- Description: This is the you win screen
 -----------------------------------------------------------------------------------------
 

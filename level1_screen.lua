@@ -1,8 +1,8 @@
 -----------------------------------------------------------------------------------------
 --
 -- game_level1.lua
--- Created by: Daniel
--- Date: Nov. 22nd, 2014
+-- Name: Sasha Malko
+-- Date: May 7, 2018
 -- Description: This is the level 1 screen of the game.
 -----------------------------------------------------------------------------------------
 
@@ -70,9 +70,17 @@ local alternateAnswerBox3PreviousX
 -- the black box where the user will drag the answer
 local userAnswerBoxPlaceholder
 
--- sound effects
-local correctSound
-local booSound
+--Number of correct/incorrect answers
+local answersCorrect = 0
+local answersIncorrect = 0
+
+--Sounds
+local correctSound = audio.loadSound("Sounds/Correct.wav")
+local correctSoundChannel 
+local booSound = audio.loadSound("Sounds/boo.mp3")
+local booSoundChannel
+local backgroundMusic = audio.loadSound("Sounds/hey.mp3")
+local backgroundMusicChannel
 
 -----------------------------------------------------------------------------------------
 -- LOCAL FUNCTIONS
@@ -123,10 +131,10 @@ local function DetermineAlternateAnswers()
 -- RESET ALL X POSITIONS OF ANSWER BOXES (because the x-position is changed when it is
 -- placed into the black box)
 -----------------------------------------------------------------------------------------
-    answerbox.x = display.contentWidth * 0.9
-    alternateAnswerBox1.x = display.contentWidth * 0.9
-    alternateAnswerBox2.x = display.contentWidth * 0.9
-    alternateAnswerBox3.x = display.contentWidth * 0.9
+    answerbox.x = display.contentWidth * 0.1
+    alternateAnswerBox1.x = display.contentWidth * 0.1
+    alternateAnswerBox2.x = display.contentWidth * 0.1
+    alternateAnswerBox3.x = display.contentWidth * 0.1
 
 
 end
@@ -208,7 +216,7 @@ local function YouWinTransitionLevel1( )
 end
 
 -- Transitioning Function to YouLose screen
-local function YouWinTransitionLevel1( )
+local function YouLoseTransitionLevel1( )
     composer.gotoScene("you_lose", {effect = "fade", time = 500})
 end
 
@@ -219,10 +227,35 @@ local function RestartLevel1()
     PositionAnswers() 
 end
 
--- Function to Check User Input
+-- Function to Check User Input to see if answers are correct or incorrect
 local function CheckUserAnswerInput()
-    timer.performWithDelay(1600, RestartLevel1) 
-end
+    if (userAnswer == correctAnswer) then 
+        answersCorrect = answersCorrect + 1
+        timer.performWithDelay(1600, RestartLevel1)
+        correctSoundChannel = audio.play(correctSound)
+    elseif (userAnswer == alternateAnswer1) then 
+        answersIncorrect = answersIncorrect + 1
+        booSoundChannel = audio.play(booSound)
+        timer.performWithDelay(1600, RestartLevel1)
+    elseif (userAnswer == alternateAnswer2) then 
+        answersIncorrect = answersIncorrect + 1
+        booSoundChannel = audio.play(booSound)
+        timer.performWithDelay(1600, RestartLevel1)
+    elseif (userAnswer == alternateAnswer3) then 
+        answersIncorrect = answersIncorrect + 1
+        booSoundChannel = audio.play(booSound)
+        timer.performWithDelay(1600, RestartLevel1)
+    end 
+
+    --Answers correct needed to win
+    if  (answersIncorrect == 2) then 
+        timer.performWithDelay(1600, YouLoseTransitionLevel1) 
+    --Answers incorrect needed to lose
+    elseif (answersCorrect == 3) then 
+        timer.performWithDelay(1600, YouWinTransitionLevel1) 
+    end
+end 
+
 
 local function TouchListenerAnswerbox(touch)
     --only work if none of the other boxes have been touched
@@ -433,9 +466,9 @@ function scene:create( event )
     bkg_image.height = display.contentHeight
 
     --the text that displays the question
-    questionText = display.newText( "" , 0, 0, nil, 100)
-    questionText.x = display.contentWidth * 0.3
-    questionText.y = display.contentHeight * 0.9
+    questionText = display.newText( "" , 0, 0, nil, 110)
+    questionText.x = display.contentWidth * 0.6
+    questionText.y = display.contentHeight * 0.4
 
     -- create the soccer ball and place it on the scene
     soccerball = display.newImageRect("Images/soccerball.png", 60, 60, 0, 0)
@@ -449,10 +482,10 @@ function scene:create( event )
     alternateAnswerBox3AlreadyTouched = false
 
     --create answerbox alternate answers and the boxes to show them
-    answerbox = display.newText("", display.contentWidth * 0.9, 0, nil, 100)
-    alternateAnswerBox1 = display.newText("", display.contentWidth * 0.9, 0, nil, 100)
-    alternateAnswerBox2 = display.newText("", display.contentWidth * 0.9, 0, nil, 100)
-    alternateAnswerBox3 = display.newText("", display.contentWidth * 0.9, 0, nil, 100)
+    answerbox = display.newText("", display.contentWidth * 0.9, 0, nil, 110)
+    alternateAnswerBox1 = display.newText("", display.contentWidth * 0.9, 0, nil, 110)
+    alternateAnswerBox2 = display.newText("", display.contentWidth * 0.9, 0, nil, 110)
+    alternateAnswerBox3 = display.newText("", display.contentWidth * 0.9, 0, nil, 110)
 
     -- set the x positions of each of the answer boxes
     answerboxPreviousX = display.contentWidth * 0.9
@@ -462,9 +495,9 @@ function scene:create( event )
 
 
     -- the black box where the user will drag the answer
-    userAnswerBoxPlaceholder = display.newImageRect("Images/userAnswerBoxPlaceholder.png",  130, 130, 0, 0)
-    userAnswerBoxPlaceholder.x = display.contentWidth * 0.6
-    userAnswerBoxPlaceholder.y = display.contentHeight * 0.9
+    userAnswerBoxPlaceholder = display.newImageRect("Images/userAnswerBoxPlaceholder.png", 130, 130, 0, 0)
+    userAnswerBoxPlaceholder.x = display.contentWidth * 0.9
+    userAnswerBoxPlaceholder.y = display.contentHeight * 0.4
 
     ----------------------------------------------------------------------------------
     --adding objects to the scene group
@@ -503,6 +536,9 @@ function scene:show( event )
         -- Example: start timers, begin animation, play audio, etc.
         RestartLevel1()
         AddAnswerBoxEventListeners() 
+
+        --Play background music
+        backgroundMusicChannel = audio.play(backgroundMusic)
 
     end
 
