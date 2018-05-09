@@ -145,7 +145,7 @@ local function PositionAnswers()
     -------------------------------------------------------------------------------------------
     --ROMDOMLY SELECT ANSWER BOX POSITIONS
     -----------------------------------------------------------------------------------------
-    randomPosition = math.random(1,3)
+    randomPosition = math.random(1,4)
 
     -- random position 1
     if (randomPosition == 1) then
@@ -201,6 +201,26 @@ local function PositionAnswers()
 
         --alternateAnswerBox3
         alternateAnswerBox3.y = display.contentHeight * 0.55
+
+        --remembering their positions to return the answer in case it's wrong
+        alternateAnswerBox1PreviousY = alternateAnswerBox1.y
+        alternateAnswerBox2PreviousY = alternateAnswerBox2.y
+        alternateAnswerBox3PreviousY = alternateAnswerBox3.y
+        answerboxPreviousY = answerbox.y 
+
+            -- random position 4
+     elseif (randomPosition == 4) then
+        answerbox.y = display.contentHeight * 0.85
+
+        --alternateAnswerBox2
+        alternateAnswerBox2.y = display.contentHeight * 0.7
+
+        --alternateAnswerBox1
+        alternateAnswerBox1.y = display.contentHeight * 0.55
+
+
+        --alternateAnswerBox3
+        alternateAnswerBox3.y = display.contentHeight * 0.4
 
         --remembering their positions to return the answer in case it's wrong
         alternateAnswerBox1PreviousY = alternateAnswerBox1.y
